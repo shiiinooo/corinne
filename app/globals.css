@@ -1,0 +1,61 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #f7efe6;
+}
+
+@keyframes drift {
+  0%   { transform: translateY(-12vh) rotate(0deg); }
+  100% { transform: translateY(114vh) rotate(380deg); }
+}
+
+@keyframes petalBurst {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(.3); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) rotate(var(--r)) scale(1); opacity: 0; }
+}
+
+@keyframes bloomGrow {
+  0%   { transform: scale(0); opacity: 0; }
+  62%  { transform: scale(1.09); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes msgIn {
+  0%   { opacity: 0; transform: translateY(26px) scale(.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes glowIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes sway {
+  0%, 100% { rotate: -3.2deg; }
+  50%       { rotate:  3.2deg; }
+}
+
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-9px); }
+}
+
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 10px 26px -10px rgba(201,108,140,.55); }
+  50%       { box-shadow: 0 16px 34px -10px rgba(201,108,140,.75); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: .25; transform: scale(.85); }
+  50%       { opacity:   1; transform: scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
