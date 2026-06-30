@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion'
 
 const rnd = (a, b) => a + Math.random() * (b - a)
 
@@ -158,6 +158,7 @@ export default function Page() {
   }
 
   return (
+    <MotionConfig reducedMotion="never">
     <div style={{
       position: 'fixed', inset: 0,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -289,5 +290,6 @@ export default function Page() {
         )}
       </AnimatePresence>
     </div>
+    </MotionConfig>
   )
 }
