@@ -34,7 +34,7 @@ function genBurstPetals() {
     const ang  = rnd(0, Math.PI * 2)
     const dist = rnd(200, 600)
     const size = rnd(9, 22)
-    const dur  = rnd(2200, 3800)
+    const dur  = rnd(4000, 6500)
     return {
       tx:  (Math.cos(ang) * dist) + 'px',
       ty:  (Math.sin(ang) * dist + rnd(30, 160)) + 'px',
@@ -48,7 +48,7 @@ function genBurstPetals() {
         background:      cols[i % cols.length],
         borderRadius:    '54% 8% 54% 8%',
         animation:       `petalBurst ${dur}ms cubic-bezier(.15,.7,.4,1)`,
-        animationDelay:  rnd(0, 200) + 'ms',
+        animationDelay:  rnd(0, 600) + 'ms',
         animationFillMode: 'forwards',
       },
     }
@@ -65,7 +65,7 @@ function genFlowers() {
     size:        rnd(72, 120),
     petalColor:  palette[i][0],
     centerColor: palette[i][1],
-    delay:       200 + i * 130,
+    delay:       400 + i * 250,
     swayDelay:   -rnd(0, 3),
     stemH:       rnd(120, 240),
   }))
@@ -81,7 +81,7 @@ function Flower({ index, size, petalColor, centerColor, delay, swayDelay, stemH 
     <div style={{
       position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center',
       transformOrigin: 'bottom center',
-      animation: `bloomGrow 1.8s cubic-bezier(.2,.85,.25,1) both`,
+      animation: `bloomGrow 3s cubic-bezier(.2,.85,.25,1) both`,
       animationDelay: delay + 'ms',
     }}>
       {/* Bloom head */}
@@ -230,7 +230,7 @@ export default function Page() {
           <div aria-hidden="true" style={{
             position: 'absolute', inset: 0, zIndex: 1,
             background: 'radial-gradient(130% 120% at 50% 12%,#fbe6ec 0%,#f7ddd0 45%,#f3e7d2 100%)',
-            animation: 'glowIn 1.8s ease forwards',
+            animation: 'glowIn 2.5s ease forwards',
           }} />
 
           {/* Flowers at bottom */}
@@ -255,12 +255,12 @@ export default function Page() {
           <div style={{
             position: 'relative', zIndex: 5, textAlign: 'center',
             padding: 32, maxWidth: 680, width: '100%', marginBottom: '16vh',
-            animation: 'msgIn 1.4s cubic-bezier(.2,.8,.25,1) both',
+            animation: 'msgIn 1.6s cubic-bezier(.2,.8,.25,1) both',
           }}>
             <div style={{
               fontWeight: 700, letterSpacing: '.32em', textTransform: 'uppercase',
               fontSize: 12, color: '#c97a96', marginBottom: 14,
-              animation: 'msgIn 1.1s ease both', animationDelay: '.3s',
+              animation: 'msgIn 1.4s ease both', animationDelay: '1s',
             }}>
               ✿ avec tout notre cœur ✿
             </div>
@@ -268,7 +268,7 @@ export default function Page() {
               fontFamily: 'var(--font-cormorant), serif', fontWeight: 600,
               fontSize: 'clamp(54px,9vw,104px)', lineHeight: .98,
               margin: '0 0 22px', color: '#7a4a52',
-              animation: 'msgIn 1.1s ease both', animationDelay: '.55s',
+              animation: 'msgIn 1.4s ease both', animationDelay: '1.6s',
             }}>
               Merci Corrine
             </h1>
@@ -276,21 +276,21 @@ export default function Page() {
               fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic',
               fontSize: 'clamp(20px,2.6vw,27px)', lineHeight: 1.5,
               color: '#6a5750', margin: '0 auto 16px', maxWidth: 540,
-              animation: 'msgIn 1.1s ease both', animationDelay: '.85s',
+              animation: 'msgIn 1.4s ease both', animationDelay: '2.2s',
             }}>
               Grâce à ta formation « Évaluer son image pro », tu nous as aidés à révéler le meilleur de nous‑mêmes.
             </p>
             <p style={{
               fontSize: 'clamp(15px,1.8vw,17.5px)', lineHeight: 1.65,
               color: '#8a766e', margin: '0 auto 30px', maxWidth: 480,
-              animation: 'msgIn 1.1s ease both', animationDelay: '1.15s',
+              animation: 'msgIn 1.4s ease both', animationDelay: '2.8s',
             }}>
               Ta bienveillance, ton écoute et tes précieux conseils ont fait toute la différence. 🌸
             </p>
             <div style={{
               fontFamily: 'var(--font-cormorant), serif',
               fontSize: 'clamp(18px,2.2vw,22px)', color: '#7a4a52',
-              animation: 'msgIn 1.1s ease both', animationDelay: '1.45s',
+              animation: 'msgIn 1.4s ease both', animationDelay: '3.4s',
             }}>
               Avec toute notre gratitude — ton groupe 💐
             </div>
@@ -304,7 +304,7 @@ export default function Page() {
                 fontWeight: 600, fontSize: 13, letterSpacing: '.04em',
                 padding: '10px 20px', borderRadius: 999, cursor: 'pointer',
                 backdropFilter: 'blur(4px)',
-                animation: 'msgIn 1.1s ease both', animationDelay: '1.9s',
+                animation: 'msgIn 1.4s ease both', animationDelay: '4.2s',
                 transition: 'background .2s',
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.9)'}
