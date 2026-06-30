@@ -5,291 +5,321 @@ import { motion, AnimatePresence, MotionConfig } from 'framer-motion'
 
 const rnd = (a, b) => a + Math.random() * (b - a)
 
-/* ── Data generators (client-only) ── */
+const PETAL_COLORS = ['#e8b4c0', '#d4a0b0', '#f0cdb8', '#e8c4a8', '#c9a0b0']
 
 function genAmbientPetals() {
-  const cols = ['#e89bb0','#f0b8c4','#e9a178','#f2c95e','#d97a98','#cfe0c3','#f4d4b0']
-  return Array.from({ length: 18 }, (_, i) => {
-    const size = rnd(9, 22)
-    const dur  = rnd(12, 24)
-    return {
-      width:          size + 'px',
-      height:         size * 1.25 + 'px',
-      background:     cols[i % cols.length],
-      borderRadius:   '54% 8% 54% 8%',
-      position:       'absolute',
-      left:           rnd(0, 100) + '%',
-      top:            '-12vh',
-      opacity:        rnd(0.35, 0.7),
-      filter:         'blur(.2px)',
-      animation:      `drift ${dur}s linear infinite`,
-      animationDelay: -rnd(0, dur) + 's',
-      pointerEvents:  'none',
-    }
-  })
+  return Array.from({ length: 10 }, (_, i) => ({
+    width:  rnd(8, 16) + 'px',
+    height: rnd(10, 20) + 'px',
+    background: PETAL_COLORS[i % PETAL_COLORS.length],
+    left: rnd(0, 100) + '%',
+    top: '-8vh',
+    opacity: rnd(0.25, 0.5),
+    animationDuration: rnd(18, 32) + 's',
+    animationDelay: -rnd(0, 20) + 's',
+  }))
 }
 
 function genBurstPetals() {
-  const cols = ['#e58aa6','#f0b8c4','#e9a178','#f2c95e','#d4738f','#f4d4b0','#cfe0c3']
-  return Array.from({ length: 56 }, (_, i) => {
-    const ang  = rnd(0, Math.PI * 2)
-    const dist = rnd(200, 600)
-    const size = rnd(9, 22)
-    const dur  = rnd(4500, 7000)
+  return Array.from({ length: 28 }, (_, i) => {
+    const ang = rnd(0, Math.PI * 2)
+    const dist = rnd(120, 380)
+    const size = rnd(7, 14)
     return {
-      tx: (Math.cos(ang) * dist) + 'px',
-      ty: (Math.sin(ang) * dist + rnd(30, 160)) + 'px',
-      r:  rnd(-360, 360) + 'deg',
+      tx: Math.cos(ang) * dist + 'px',
+      ty: Math.sin(ang) * dist + rnd(20, 80) + 'px',
+      r: rnd(-180, 180) + 'deg',
       style: {
-        position:          'absolute',
-        left:              0, top: 0,
-        width:             size + 'px',
-        height:            size * 1.3 + 'px',
-        background:        cols[i % cols.length],
-        borderRadius:      '54% 8% 54% 8%',
-        animation:         `petalBurst ${dur}ms cubic-bezier(.15,.7,.4,1)`,
-        animationDelay:    rnd(0, 800) + 'ms',
-        animationFillMode: 'forwards',
+        width: size + 'px',
+        height: size * 1.2 + 'px',
+        background: PETAL_COLORS[i % PETAL_COLORS.length],
+        borderRadius: '54% 8% 54% 8%',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        animation: `petalBurst ${rnd(5000, 8000)}ms cubic-bezier(.2,.8,.3,1) forwards`,
+        animationDelay: rnd(0, 400) + 'ms',
       },
     }
   })
 }
 
+const FLOWER_PALETTE = [
+  ['#d4a0b0', '#dfc89a'],
+  ['#b86a84', '#e8c4a8'],
+  ['#e8b4c0', '#dfc89a'],
+  ['#c9a0b0', '#e8c4a8'],
+  ['#b86a84', '#dfc89a'],
+]
+
 function genFlowers() {
-  const palette = [
-    ['#e58aa6','#e8a23a'], ['#d4738f','#f2c95e'], ['#f0a8b8','#e8a23a'],
-    ['#e9a178','#d98a3a'], ['#cf86a8','#f2c95e'], ['#f2b6c4','#e8a23a'], ['#dd7e9a','#e8a23a'],
-  ]
-  return Array.from({ length: 7 }, (_, i) => ({
-    index:       i,
-    size:        rnd(72, 120),
-    petalColor:  palette[i][0],
-    centerColor: palette[i][1],
-    swayDelay:   -rnd(0, 3),
-    stemH:       rnd(120, 240),
+  return Array.from({ length: 5 }, (_, i) => ({
+    index: i,
+    size: rnd(64, 96),
+    petalColor: FLOWER_PALETTE[i][0],
+    centerColor: FLOWER_PALETTE[i][1],
+    swayDelay: -rnd(0, 4),
+    stemH: rnd(100, 180),
   }))
 }
 
-/* ── Flower component ── */
-function Flower({ index, size, petalColor, centerColor, swayDelay, stemH }) {
-  const n  = 7
-  const pw = size * 0.3
-  const ph = size * 0.56
+function Flower({ index, size, petalColor, centerColor, swayDelay, stemH, className = '', blooming = true }) {
+  const petals = 6
+  const pw = size * 0.32
+  const ph = size * 0.54
+
+  const head = (
+    <>
+      <div className="flower__head" style={{ width: size, height: size, animationDelay: swayDelay + 's' }}>
+        {Array.from({ length: petals }, (_, k) => (
+          <div
+            key={k}
+            className="flower__petal"
+            style={{
+              width: pw,
+              height: ph,
+              background: petalColor,
+              transform: `translate(-50%, -100%) rotate(${k * (360 / petals)}deg)`,
+            }}
+          />
+        ))}
+        <div
+          className="flower__center"
+          style={{
+            width: size * 0.32,
+            height: size * 0.32,
+            background: `radial-gradient(circle at 38% 34%, #fce8a8, ${centerColor})`,
+          }}
+        />
+      </div>
+      {stemH > 0 && <div className="flower__stem" style={{ height: stemH }} />}
+      {stemH > 0 && (
+        <div
+          className="flower__leaf"
+          style={{
+            left: index % 2 ? '56%' : '28%',
+            top: size + stemH * 0.4,
+            width: size * 0.38,
+            height: size * 0.2,
+            transform: index % 2 ? 'rotate(24deg)' : 'rotate(-24deg) scaleX(-1)',
+          }}
+        />
+      )}
+    </>
+  )
+
+  if (!blooming) {
+    return <div className={`flower ${className}`.trim()}>{head}</div>
+  }
 
   return (
     <motion.div
-      style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', transformOrigin: 'bottom center' }}
+      className={`flower ${className}`.trim()}
+      style={{ transformOrigin: 'bottom center' }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 2.8, delay: 0.5 + index * 0.3, ease: [0.2, 0.85, 0.25, 1] }}
+      transition={{ duration: 2.2, delay: 0.6 + index * 0.25, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div style={{
-        position: 'relative', width: size, height: size,
-        animation: `sway 4.5s ease-in-out infinite`,
-        animationDelay: swayDelay + 's',
-      }}>
-        {Array.from({ length: n }, (_, k) => (
-          <div key={k} style={{
-            position: 'absolute', left: '50%', top: '50%',
-            width: pw, height: ph,
-            background: petalColor, borderRadius: '50%',
-            transformOrigin: 'center bottom',
-            transform: `translate(-50%,-100%) rotate(${k * (360 / n)}deg)`,
-            boxShadow: 'inset 0 -6px 10px -6px rgba(0,0,0,.12)',
-          }} />
-        ))}
-        <div style={{
-          position: 'absolute', left: '50%', top: '50%',
-          width: size * 0.34, height: size * 0.34,
-          transform: 'translate(-50%,-50%)',
-          background: `radial-gradient(circle at 38% 34%,#fce8a8,${centerColor})`,
-          borderRadius: '50%', zIndex: 2,
-          boxShadow: '0 1px 3px rgba(120,80,40,.25)',
-        }} />
-      </div>
-      <div style={{
-        width: 6, height: stemH, marginTop: -4,
-        background: 'linear-gradient(#9bbf8f,#6f9a73)', borderRadius: 4,
-      }} />
-      <div style={{
-        position: 'absolute',
-        left:      index % 2 ? '58%' : '30%',
-        top:       size + stemH * 0.42,
-        width:     size * 0.42,
-        height:    size * 0.24,
-        background:   '#7fa97f',
-        borderRadius: '0 80% 0 80%',
-        transform: index % 2 ? 'rotate(28deg)' : 'rotate(-28deg) scaleX(-1)',
-      }} />
+      {head}
     </motion.div>
   )
 }
 
-/* ── Animation variants ── */
-const msgContainer = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.55, delayChildren: 1.4 } },
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 1.1, delay: 0.8 + i * 0.45, ease: [0.22, 1, 0.36, 1] },
+  }),
 }
 
-const msgItem = {
-  hidden: { opacity: 0, y: 28, scale: 0.96 },
-  show:   { opacity: 1, y: 0,  scale: 1, transition: { duration: 1.2, ease: 'easeOut' } },
-}
-
-/* ── Main page ── */
 export default function Page() {
-  const [revealed,      setRevealed]      = useState(false)
-  const [ambientPetals, setAmbientPetals] = useState([])
-  const [flowers,       setFlowers]       = useState([])
-  const [burstPetals,   setBurstPetals]   = useState([])
+  const [revealed, setRevealed] = useState(false)
+  const [petals, setPetals] = useState([])
+  const [burst, setBurst] = useState([])
+  const [flowers, setFlowers] = useState([])
 
-  useEffect(() => { setAmbientPetals(genAmbientPetals()) }, [])
+  useEffect(() => { setPetals(genAmbientPetals()) }, [])
 
   function reveal() {
+    setBurst(genBurstPetals())
     setFlowers(genFlowers())
-    setBurstPetals(genBurstPetals())
     setRevealed(true)
   }
 
   function replay() {
     setRevealed(false)
+    setBurst([])
     setFlowers([])
-    setBurstPetals([])
   }
 
   return (
     <MotionConfig reducedMotion="never">
-    <div style={{
-      position: 'fixed', inset: 0,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'radial-gradient(120% 120% at 50% 0%,#fdf8f1 0%,#f7efe6 48%,#f1e4da 100%)',
-      fontFamily: 'var(--font-nunito), system-ui, sans-serif',
-      overflow: 'hidden',
-    }}>
+      <div className={`page${revealed ? ' page--revealed' : ''}`}>
 
-      {/* Ambient petals */}
-      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2 }}>
-        {ambientPetals.map((s, i) => <div key={i} style={s} />)}
-      </div>
+        {/* Floating petals */}
+        <div className="petals" aria-hidden="true">
+          {petals.map((p, i) => (
+            <div
+              key={i}
+              className="petal"
+              style={{
+                width: p.width,
+                height: p.height,
+                background: p.background,
+                left: p.left,
+                top: p.top,
+                opacity: p.opacity,
+                animationDuration: p.animationDuration,
+                animationDelay: p.animationDelay,
+              }}
+            />
+          ))}
+        </div>
 
-      {/* ── BEFORE ── */}
-      <AnimatePresence>
-        {!revealed && (
-          <motion.div
-            key="before"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0, transition: { duration: 1 } }}
-            exit={{ opacity: 0, y: -24, scale: 0.95, transition: { duration: 0.6 } }}
-            style={{
-              position: 'relative', zIndex: 5, textAlign: 'center',
-              padding: '44px 40px', maxWidth: 560,
-              background: 'rgba(255,255,255,.62)',
-              border: '1px solid rgba(201,122,150,.18)',
-              borderRadius: 28,
-              boxShadow: '0 30px 70px -30px rgba(122,74,82,.4)',
-              backdropFilter: 'blur(8px)',
-            }}
-          >
+        {/* Intro */}
+        <AnimatePresence>
+          {!revealed && (
             <motion.div
-              animate={{ y: [0, -9, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <div style={{ fontSize: 34, marginBottom: 10, animation: 'twinkle 3s ease-in-out infinite' }}>
-                🌷
-              </div>
-              <div style={{ fontWeight: 700, letterSpacing: '.32em', textTransform: 'uppercase', fontSize: 11.5, color: '#c97a96', marginBottom: 16 }}>
-                une petite attention
-              </div>
-              <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 600, fontSize: 'clamp(46px,8vw,76px)', lineHeight: 1, margin: '0 0 14px', color: '#7a4a52' }}>
-                Corrine,
-              </h1>
-              <p style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', fontSize: 'clamp(19px,2.4vw,24px)', lineHeight: 1.45, color: '#6a5750', margin: '0 0 34px' }}>
-                on a préparé quelque chose rien que pour toi…
-              </p>
-              <motion.button
-                onClick={reveal}
-                whileHover={{ y: -2, scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                animate={{ boxShadow: ['0 10px 26px -10px rgba(201,108,140,.55)', '0 16px 34px -10px rgba(201,108,140,.75)', '0 10px 26px -10px rgba(201,108,140,.55)'] }}
-                transition={{ boxShadow: { duration: 2.6, repeat: Infinity, ease: 'easeInOut' } }}
-                style={{ border: 'none', background: 'linear-gradient(135deg,#e58aa6 0%,#d4738f 55%,#c96c8c 100%)', color: '#fff', fontFamily: 'var(--font-nunito), sans-serif', fontWeight: 700, fontSize: 17, letterSpacing: '.02em', padding: '16px 38px', borderRadius: 999, cursor: 'pointer' }}
-              >
-                Ouvrir la surprise &nbsp;🌸
-              </motion.button>
-              <div style={{ marginTop: 18, fontSize: 12.5, color: '#b39a93' }}>
-                (appuie sur le bouton ✨)
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── AFTER ── */}
-      <AnimatePresence>
-        {revealed && (
-          <motion.div
-            key="after"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          >
-            {/* Glow background */}
-            <motion.div
-              aria-hidden="true"
+              key="intro"
+              className="intro"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 3, ease: 'easeOut' }}
-              style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'radial-gradient(130% 120% at 50% 12%,#fbe6ec 0%,#f7ddd0 45%,#f3e7d2 100%)' }}
-            />
-
-            {/* Flowers */}
-            <div aria-hidden="true" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '42vh', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '1.5vw', zIndex: 3, pointerEvents: 'none' }}>
-              {flowers.map((f, i) => <Flower key={i} {...f} />)}
-            </div>
-
-            {/* Burst petals */}
-            <div aria-hidden="true" style={{ position: 'absolute', left: '50%', top: '42%', zIndex: 4, pointerEvents: 'none' }}>
-              {burstPetals.map((p, i) => (
-                <div key={i} style={{ ...p.style, '--tx': p.tx, '--ty': p.ty, '--r': p.r }} />
-              ))}
-            </div>
-
-            {/* Message */}
-            <motion.div
-              variants={msgContainer}
-              initial="hidden"
-              animate="show"
-              style={{ position: 'relative', zIndex: 5, textAlign: 'center', padding: 32, maxWidth: 680, width: '100%', marginBottom: '16vh' }}
+              exit={{ opacity: 0, y: -16, transition: { duration: 0.7, ease: 'easeInOut' } }}
+              transition={{ duration: 1.2, ease: 'easeOut' }}
             >
-              <motion.div variants={msgItem} style={{ fontWeight: 700, letterSpacing: '.32em', textTransform: 'uppercase', fontSize: 12, color: '#c97a96', marginBottom: 14 }}>
-                ✿ avec tout notre cœur ✿
-              </motion.div>
-              <motion.h1 variants={msgItem} style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 600, fontSize: 'clamp(54px,9vw,104px)', lineHeight: .98, margin: '0 0 22px', color: '#7a4a52' }}>
-                Merci Corrine
-              </motion.h1>
-              <motion.p variants={msgItem} style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', fontSize: 'clamp(20px,2.6vw,27px)', lineHeight: 1.5, color: '#6a5750', margin: '0 auto 16px', maxWidth: 540 }}>
-                Grâce à ta formation « Évaluer son image pro », tu nous as aidés à révéler le meilleur de nous‑mêmes.
-              </motion.p>
-              <motion.p variants={msgItem} style={{ fontSize: 'clamp(15px,1.8vw,17.5px)', lineHeight: 1.65, color: '#8a766e', margin: '0 auto 30px', maxWidth: 480 }}>
-                Ta bienveillance, ton écoute et tes précieux conseils ont fait toute la différence. 🌸
-              </motion.p>
-              <motion.div variants={msgItem} style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(18px,2.2vw,22px)', color: '#7a4a52' }}>
-                Avec toute notre gratitude — ton groupe 💐
-              </motion.div>
-              <motion.button
-                variants={msgItem}
-                onClick={replay}
-                whileHover={{ background: 'rgba(255,255,255,.9)' }}
-                style={{ marginTop: 36, border: '1px solid #e3c0c9', background: 'rgba(255,255,255,.55)', color: '#b86a84', fontFamily: 'var(--font-nunito), sans-serif', fontWeight: 600, fontSize: 13, letterSpacing: '.04em', padding: '10px 20px', borderRadius: 999, cursor: 'pointer', backdropFilter: 'blur(4px)' }}
+              <motion.p
+                className="intro__label"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.3 }}
               >
-                ✿ recommencer
+                Pour toi
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Flower
+                  className="intro__flower"
+                  blooming={false}
+                  index={0}
+                  size={52}
+                  petalColor="#d4a0b0"
+                  centerColor="#dfc89a"
+                  swayDelay={0}
+                  stemH={0}
+                />
+              </motion.div>
+
+              <motion.h1
+                className="intro__name"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                Corrine
+              </motion.h1>
+
+              <motion.p
+                className="intro__hint"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.75 }}
+              >
+                Quelqu'un a préparé une petite surprise…
+              </motion.p>
+
+              <motion.button
+                className="btn-open"
+                onClick={reveal}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.1 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                Ouvrir
               </motion.button>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          )}
+        </AnimatePresence>
+
+        {/* Reveal */}
+        <AnimatePresence>
+          {revealed && (
+            <motion.div
+              key="reveal"
+              style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Soft glow */}
+              <div className="bloom" aria-hidden="true">
+                <motion.div
+                  className="bloom__ring"
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 2.8, ease: [0.22, 1, 0.36, 1] }}
+                />
+              </div>
+
+              {/* Petal burst */}
+              <div className="burst" aria-hidden="true">
+                {burst.map((p, i) => (
+                  <div key={i} style={{ ...p.style, '--tx': p.tx, '--ty': p.ty, '--r': p.r }} />
+                ))}
+              </div>
+
+              {/* Flower meadow */}
+              <div className="meadow" aria-hidden="true">
+                {flowers.map((f, i) => (
+                  <Flower key={i} {...f} />
+                ))}
+              </div>
+
+              {/* Message */}
+              <div className="message">
+                <motion.p className="message__eyebrow" custom={0} variants={fadeUp} initial="hidden" animate="show">
+                  Avec gratitude
+                </motion.p>
+
+                <motion.h1 className="message__title" custom={1} variants={fadeUp} initial="hidden" animate="show">
+                  Merci, <em>Corrine</em>
+                </motion.h1>
+
+                <motion.div className="message__divider" custom={2} variants={fadeUp} initial="hidden" animate="show" />
+
+                <motion.p className="message__body" custom={3} variants={fadeUp} initial="hidden" animate="show">
+                  Grâce à ta formation <strong>« Évaluer son image pro »</strong>, tu nous as aidés à révéler le meilleur de nous-mêmes.
+                </motion.p>
+
+                <motion.p className="message__body" custom={4} variants={fadeUp} initial="hidden" animate="show">
+                  Ta bienveillance et tes conseils ont fait toute la différence.
+                </motion.p>
+
+                <motion.p className="message__sign" custom={5} variants={fadeUp} initial="hidden" animate="show">
+                  — Force Collective
+                </motion.p>
+              </div>
+
+              <motion.button
+                className="btn-replay"
+                onClick={replay}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.5 }}
+                transition={{ delay: 4, duration: 0.8 }}
+                whileHover={{ opacity: 1 }}
+              >
+                Recommencer
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </MotionConfig>
   )
 }
