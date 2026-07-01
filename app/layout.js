@@ -17,8 +17,8 @@ const nunito = Nunito({
 })
 
 export const metadata = {
-  title: 'Merci Corrine',
-  description: 'Un message de gratitude pour Corrine',
+  title: 'Merci Corinne',
+  description: 'Un message de gratitude pour Corinne',
 }
 
 export default function RootLayout({ children }) {

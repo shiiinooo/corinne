@@ -221,7 +221,7 @@ export default function Page() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                Corrine
+                Corinne
               </motion.h1>
 
               <motion.p
@@ -230,7 +230,7 @@ export default function Page() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.75 }}
               >
-                Quelqu'un a préparé une petite surprise…
+                Nous avons préparé une petite surprise rien que pour toi…
               </motion.p>
 
               <motion.button
@@ -284,21 +284,21 @@ export default function Page() {
               {/* Message */}
               <div className="message">
                 <motion.p className="message__eyebrow" custom={0} variants={fadeUp} initial="hidden" animate="show">
-                  Avec gratitude
+                  Avec toute notre gratitude
                 </motion.p>
 
                 <motion.h1 className="message__title" custom={1} variants={fadeUp} initial="hidden" animate="show">
-                  Merci, <em>Corrine</em>
+                  Merci, <em>Corinne</em>
                 </motion.h1>
 
                 <motion.div className="message__divider" custom={2} variants={fadeUp} initial="hidden" animate="show" />
 
                 <motion.p className="message__body" custom={3} variants={fadeUp} initial="hidden" animate="show">
-                  Grâce à ta formation <strong>« Évaluer son image pro »</strong>, tu nous as aidés à révéler le meilleur de nous-mêmes.
+                  Grâce à ta formation <strong>« Évaluer son image pro »</strong>, tu nous as aidé à révéler le meilleur de nous-mêmes.
                 </motion.p>
 
                 <motion.p className="message__body" custom={4} variants={fadeUp} initial="hidden" animate="show">
-                  Ta bienveillance et tes conseils ont fait toute la différence.
+                  Ta bienveillance, ton écoute et tes précieux conseils ont fait toute la différence.
                 </motion.p>
 
                 <motion.p className="message__sign" custom={5} variants={fadeUp} initial="hidden" animate="show">
